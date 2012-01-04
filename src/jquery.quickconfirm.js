@@ -30,11 +30,16 @@
 ;(function( $ ){
 
     var defaults = {
+        // default to 'under the triggering element'
         position : 'bottom',
+        // the default css properties
         css : {
+            // not part of the page flow; it should render on top
             position : 'absolute',
+            // the border color; can be set via css, but it would be lost on the "arrow"
             borderColor : '#ccc'
         },
+        // the default contents of the quickConfirm dialog box
         contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>'
     };
 
@@ -74,7 +79,7 @@
          * Replaces the default options for all quickConfirm dialogs
          *
          * @param {Object} options The new default options for quickConfirm dialogs
-         * @returns {Object} the `defaults` object if `options` is not defined; else,
+         * @return {Object} the `defaults` object if `options` is not defined; else,
          *                   returns the chainable jQuery object
          */
         defaults : function( options ){
@@ -88,10 +93,16 @@
                 return this;
             }
         },
-        close : function( options ){
-            console.log( 'closing' );
+        /**
+         * Closes the quickConfirm dialog
+         *
+         * @param {HTMLElement=} element The element associated with the quickConfirm dialog to close.
+         *                               If undefined, defaults to `this`.
+         * @return {jQuery} The chainable jQuery object.
+         */
+        close : function( element ){
             // find the quick confirm dialog
-            var el = $(this), qc;
+            var el = $( element || this ), qc;
             // cycle to find the element with the quickConfirm element attached
             while( el.length > 0 ){
                 // if el has 'quickConfirm.trigger', that's the triggering element
@@ -115,6 +126,9 @@
                 // remove the quickConfirm element
                 qc.remove();
             }
+
+            // return the chainable jQuery object
+            return this;
         }
     };
 
