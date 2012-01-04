@@ -31,7 +31,11 @@
 
     var defaults = {
         position : 'bottom',
-        contents : '<div>This is a test</div>'
+        css : {
+            position : 'absolute',
+            borderColor : '#ccc'
+        },
+        contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>'
     };
 
     var methods = {
@@ -44,13 +48,14 @@
                 var trigger = $(this),
                 // for positioning
                     offset = trigger.offset(),
-                // the css object (for mandatory properties beyond typical styling)
-                    cssProperties = { position : 'absolute' },
                 // the displayed element for the quickConfirm dialog
-                    quickConfirmElement = $( document.createElement('div') );
+                // reuse the old element if it exists
+                    quickConfirmElement = trigger.data( 'quickConfirm.element' ) || $( document.createElement('div') );
 
                 // apply properties to the quickConfirm element
                 quickConfirmElement
+                // attach it to the trigger so the dialog can be found
+                    .data( 'quickConfirm.trigger', trigger )
                 // append it directly to the body
                     .appendTo( 'body' )
                 // add an appropriate class
@@ -58,7 +63,7 @@
                 // append the contents
                     .html( params.contents )
                 // apply the styles
-                    .css( cssProperties );
+                    .css( params.css );
 
                 // add some properties to the trigger
                 trigger.data( 'quickConfirm.element', quickConfirmElement );
@@ -69,14 +74,47 @@
          * Replaces the default options for all quickConfirm dialogs
          *
          * @param {Object} options The new default options for quickConfirm dialogs
+         * @returns {Object} the `defaults` object if `options` is not defined; else,
+         *                   returns the chainable jQuery object
          */
         defaults : function( options ){
-            $.extend( defaults, options );
+            // if options is not defined, return the defaults
+            if( !options ) {
+                return defaults;
+            } else {
+                // extend the defaults, deep-copy style
+                $.extend( true, defaults, options );
 
-            return this;
+                return this;
+            }
         },
         close : function( options ){
+            console.log( 'closing' );
+            // find the quick confirm dialog
+            var el = $(this), qc;
+            // cycle to find the element with the quickConfirm element attached
+            while( el.length > 0 ){
+                // if el has 'quickConfirm.trigger', that's the triggering element
+                if( el.data( 'quickConfirm.trigger' ) ){
+                    el = el.data( 'quickConfirm.trigger' );
+                }
 
+                // see if the element has the 'quickConfirm.element' property
+                if( qc = el.data( 'quickConfirm.element' ) ){
+                    // already set qc, just break out of the loop
+                    break;
+                }
+
+                // no quickConfirm attributes found; try the parent
+                el = el.parent();
+            }
+
+            if( qc ){
+                // remove the quickConfirm data property
+                el.removeData( 'quickConfirm.element' );
+                // remove the quickConfirm element
+                qc.remove();
+            }
         }
     };
 
