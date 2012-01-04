@@ -41,7 +41,8 @@
     var defaults = {
         arrow : {
             height : 10,
-            width : 10
+            width : 10,
+            borderWidth : 1
         },
         // default to 'under the triggering element'
         position : 'bottom',
@@ -91,42 +92,47 @@
                     var arrowEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow' ),
                         arrowBorderEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow-border' );
 
-                    var _width = params.arrow.width + 'px', _height = params.arrow.height + 'px',
-                    _outlineWidth = (params.arrow.width + 2) + 'px', _outlineHeight = (params.arrow.height + 2) + 'px',
+                    var _w = params.arrow.width, _h = params.arrow.height, _bw = params.arrow.borderWidth,
                     common = {
                         position : 'absolute',
                         height : 0,
                         width : 0,
                         borderStyle : 'solid'
+                    },
+                    border = {
+                        borderWidth : [ _w + _bw, _w + _bw, _w + _bw, _w + _bw ],
+                        borderColor : [ 'transparent', 'transparent', 'transparent', 'transparent' ]
+                    },
+                    inner = {
+                        borderWidth : [ _w, _w, _w, _w ],
+                        borderColor : [ 'transparent', 'transparent', 'transparent', 'transparent' ]
                     };
-                    var css, bordercss;
 
                     switch( params.position ){
                       case 'bottom' :
-                        bordercss = {
-                            top : - (params.arrow.height + 2),
-                            left : (quickConfirmElement.outerWidth() / 2) - (params.arrow.width) - 2,
-                            borderWidth : [0, _outlineWidth, _outlineWidth].join(' '),
-                            borderColor : ['transparent', 'transparent', params.css.borderColor].join(' ')
-                        };
-                        css = {
-                            top : - params.arrow.height,
-                            left : (quickConfirmElement.outerWidth() / 2) - (params.arrow.width),
-                            borderWidth : [0, _width, _width].join(' '),
-                            borderColor : ['transparent', 'transparent', params.css.backgroundColor].join(' ')
-                        };
+                        border.borderWidth[0] = inner.borderWidth[0] = 0;
+
+                        border.borderColor[2] = params.css.borderColor;
+                        border.left = (quickConfirmElement.outerWidth() / 2) - _w - params.arrow.borderWidth * 2;
+                        border.top = - (_h + 2);
+
+                        inner.borderColor[2]  = params.css.backgroundColor;
+                        inner.left = - _w;
+                        inner.top = 2;
                         break;
                     }
 
-                    console.log( css );
+                    // transform the properties
+                    border.borderWidth = border.borderWidth.concat('').join('px ');
+                    border.borderColor = border.borderColor.join(' ');
 
-                    // append the arrows
-                    quickConfirmElement
-                        .css( 'margin-' + opposite_direction[ params.position ], params.arrow.height )
-                        .append(
-                            arrowBorderEl.css( common ).css( bordercss ),
-                            arrowEl.css( common ).css( css )
-                        );
+                    inner.borderWidth = inner.borderWidth.concat('').join('px ');
+                    inner.borderColor = inner.borderColor.join(' ');
+
+                    // apply the arrow
+                    arrowBorderEl.css( common ).css( border )
+                        .appendTo( quickConfirmElement.css( 'margin-top', '10px' ) )
+                        .append( arrowEl.css( common ).css( inner ) );
                 }
 
                 // add some properties to the trigger
