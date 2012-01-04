@@ -29,15 +29,32 @@
 
 ;(function( $ ){
 
+    // arrow directional assist mapping
+    var opposite_direction = {
+        'top' : 'bottom',
+        'bottom' : 'top',
+        'left' : 'right',
+        'right' : 'left'
+    };
+
+    // the global defaults for all quickConfirm dialogs
     var defaults = {
+        arrow : {
+            height : 10,
+            width : 10
+        },
         // default to 'under the triggering element'
         position : 'bottom',
+        // an additional class to add to the quickConfirm element
+        className : '',
         // the default css properties
         css : {
             // not part of the page flow; it should render on top
             position : 'absolute',
             // the border color; can be set via css, but it would be lost on the "arrow"
-            borderColor : '#ccc'
+            borderColor : '#ccc',
+            // the background color of the dialog
+            backgroundColor : 'white'
         },
         // the default contents of the quickConfirm dialog box
         contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>'
@@ -63,12 +80,54 @@
                     .data( 'quickConfirm.trigger', trigger )
                 // append it directly to the body
                     .appendTo( 'body' )
-                // add an appropriate class
-                    .addClass( 'quickConfirm' )
+                // add an appropriate class, plus any user-defined classes
+                    .addClass( 'quickConfirm' ).addClass( params.className )
                 // append the contents
                     .html( params.contents )
                 // apply the styles
                     .css( params.css );
+
+                if( null !== params.arrow ){
+                    var arrowEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow' ),
+                        arrowBorderEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow-border' );
+
+                    var _width = params.arrow.width + 'px', _height = params.arrow.height + 'px',
+                    _outlineWidth = (params.arrow.width + 2) + 'px', _outlineHeight = (params.arrow.height + 2) + 'px',
+                    common = {
+                        position : 'absolute',
+                        height : 0,
+                        width : 0,
+                        borderStyle : 'solid'
+                    };
+                    var css, bordercss;
+
+                    switch( params.position ){
+                      case 'bottom' :
+                        bordercss = {
+                            top : - (params.arrow.height + 2),
+                            left : (quickConfirmElement.outerWidth() / 2) - (params.arrow.width) - 2,
+                            borderWidth : [0, _outlineWidth, _outlineWidth].join(' '),
+                            borderColor : ['transparent', 'transparent', params.css.borderColor].join(' ')
+                        };
+                        css = {
+                            top : - params.arrow.height,
+                            left : (quickConfirmElement.outerWidth() / 2) - (params.arrow.width),
+                            borderWidth : [0, _width, _width].join(' '),
+                            borderColor : ['transparent', 'transparent', params.css.backgroundColor].join(' ')
+                        };
+                        break;
+                    }
+
+                    console.log( css );
+
+                    // append the arrows
+                    quickConfirmElement
+                        .css( 'margin-' + opposite_direction[ params.position ], params.arrow.height )
+                        .append(
+                            arrowBorderEl.css( common ).css( bordercss ),
+                            arrowEl.css( common ).css( css )
+                        );
+                }
 
                 // add some properties to the trigger
                 trigger.data( 'quickConfirm.element', quickConfirmElement );
