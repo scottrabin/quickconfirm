@@ -29,14 +29,6 @@
 
 ;(function( $ ){
 
-    // arrow directional assist mapping
-    var opposite_direction = {
-        'top' : 'bottom',
-        'bottom' : 'top',
-        'left' : 'right',
-        'right' : 'left'
-    };
-
     // the global defaults for all quickConfirm dialogs
     var defaults = {
         arrow : {
@@ -44,26 +36,61 @@
             width : 10,
             borderWidth : 1
         },
-        // default to 'under the triggering element'
-        position : 'bottom',
         // an additional class to add to the quickConfirm element
         className : '',
-        // the default css properties
-        css : {
-            // not part of the page flow; it should render on top
-            position : 'absolute',
-            // the border color; can be set via css, but it would be lost on the "arrow"
-            borderColor : '#ccc',
-            // the background color of the dialog
-            backgroundColor : 'white'
-        },
+        // close the dialog when anything outside of the dialog is clicked
+        closeOnBlur : true,
         // the default contents of the quickConfirm dialog box
-        contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>'
+        contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>',
+        // the default css options to be set directly on the quickConfirm
+        css : {
+            position : 'absolute'
+        },
+        // default to 'under the triggering element'
+        position : 'bottom'
+    };
+
+    // dynamically determine the equivalent of 'transparent'
+    var transparent = 'transparent';
+    $(function(){
+        var x = $('<div></div>').appendTo('body').hide().css('backgroundColor', transparent);
+        transparent = x.css('backgroundColor');
+        x.remove();
+    });
+
+    // arrow style assistance functions
+    var arrow = {
+        getPosition : function( position, qcEl, width, height, params ){
+            return ( position === 'bottom' ? { left : qcEl.outerWidth() / 2 - width, top : -height } :
+                     null );
+        },
+        getBorderColor : function( position, color ){
+            var bc = ['transparent', 'transparent', 'transparent', 'transparent'];
+            if( position === 'bottom' ){ bc[2] = color; }
+
+            return bc.join(' ');
+        },
+        getBorderWidth : function( position, width, height ){
+            var bw = [width, width, width, width];
+            if( position === 'bottom' ){ bw[0] = 0; }
+
+            return bw.concat('').join('px ');
+        },
+        getStyle : function( position, width, height, color, qcEl ){
+            return $.extend({
+                position : 'absolute',
+                height : 0,
+                width: 0,
+                borderStyle : 'solid',
+                borderWidth : arrow.getBorderWidth( position, width, height ),
+                borderColor : arrow.getBorderColor( position, color )
+            }, arrow.getPosition( position, qcEl, width, height ) );
+        }
     };
 
     var methods = {
         init : function( options ){
-            var params = $.extend( {}, defaults, options );
+            var params = $.extend(true, {}, defaults, options );
 
             // run an initialization for each matched element
             return this.each( function(){
@@ -88,56 +115,76 @@
                 // apply the styles
                     .css( params.css );
 
-                if( null !== params.arrow ){
-                    var arrowEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow' ),
-                        arrowBorderEl = $( document.createElement('div') ).addClass( 'quickConfirm-arrow-border' );
-
-                    var _w = params.arrow.width, _h = params.arrow.height, _bw = params.arrow.borderWidth,
-                    common = {
-                        position : 'absolute',
-                        height : 0,
-                        width : 0,
-                        borderStyle : 'solid'
-                    },
-                    border = {
-                        borderWidth : [ _w + _bw, _w + _bw, _w + _bw, _w + _bw ],
-                        borderColor : [ 'transparent', 'transparent', 'transparent', 'transparent' ]
-                    },
-                    inner = {
-                        borderWidth : [ _w, _w, _w, _w ],
-                        borderColor : [ 'transparent', 'transparent', 'transparent', 'transparent' ]
-                    };
-
-                    switch( params.position ){
-                      case 'bottom' :
-                        border.borderWidth[0] = inner.borderWidth[0] = 0;
-
-                        border.borderColor[2] = params.css.borderColor;
-                        border.left = (quickConfirmElement.outerWidth() / 2) - _w - params.arrow.borderWidth * 2;
-                        border.top = - (_h + 2);
-
-                        inner.borderColor[2]  = params.css.backgroundColor;
-                        inner.left = - _w;
-                        inner.top = 2;
-                        break;
-                    }
-
-                    // transform the properties
-                    border.borderWidth = border.borderWidth.concat('').join('px ');
-                    border.borderColor = border.borderColor.join(' ');
-
-                    inner.borderWidth = inner.borderWidth.concat('').join('px ');
-                    inner.borderColor = inner.borderColor.join(' ');
-
-                    // apply the arrow
-                    arrowBorderEl.css( common ).css( border )
-                        .appendTo( quickConfirmElement.css( 'margin-top', '10px' ) )
-                        .append( arrowEl.css( common ).css( inner ) );
-                }
-
-                // add some properties to the trigger
+                // add some data to the trigger
                 trigger.data( 'quickConfirm.element', quickConfirmElement );
 
+                // handle the closeOnBlur option
+                if( params.closeOnBlur ){
+                    // attach a body handler to close this if it's not within the dialog
+                    // but do it after everything else has been done
+                    setTimeout( function(){
+                        $('body').on('click', function closeQC( event ){
+                            // was the clicked element within the dialog?
+                            if( $(event.target).closest( quickConfirmElement ).length === 0 ){
+                                trigger.quickConfirm('close');
+                                $('body').off('click', closeQC);
+                            }
+                        });
+                    }, 1);
+                }
+
+                // handle positioning of the element
+                var pos = { top : 0, left : 0 },
+                    trigger_offset = trigger.offset();
+                switch( params.position ){
+                  case 'bottom' :
+                    // element will appear beneath the trigger element
+                    pos.top = trigger_offset.top + trigger.outerHeight();
+                    pos.left = trigger_offset.left + trigger.outerWidth() / 2
+                        - quickConfirmElement.outerWidth() / 2;
+                    break;
+                }
+
+                quickConfirmElement.css( pos );
+                quickConfirmElement.css({ marginTop : '20px' });
+
+                // handle arrows
+                if( null !== params.arrow ){
+                    var arrowEl = $( document.createElement('div') ),
+                        arrowBorderEl = $( document.createElement('div') );
+
+                    // append the elements
+                    quickConfirmElement.append( arrowBorderEl, arrowEl );
+
+                    // determine the arrow internal color
+                    var color = arrowEl.css('backgroundColor');
+                    arrowEl
+                        .addClass( 'quickConfirm-arrow' )
+                        .css(
+                            arrow.getStyle(
+                                params.position,
+                                params.arrow.width,
+                                params.arrow.height,
+                                (color === transparent ?
+                                 quickConfirmElement.css('backgroundColor') :
+                                 color),
+                                quickConfirmElement )
+                        );
+
+                    color = arrowBorderEl.css('backgroundColor');
+                    arrowBorderEl
+                        .addClass( 'quickConfirm-arrow-border' )
+                        .css(
+                            arrow.getStyle(
+                                params.position,
+                                params.arrow.width + params.arrow.borderWidth,
+                                params.arrow.height + params.arrow.borderWidth,
+                                ( color === transparent ?
+                                  quickConfirmElement.css('border' + params.position.substr(0,1).toUpperCase() + params.position.substr(1) + 'Color') :
+                                  color ),
+                                quickConfirmElement )
+                        );
+                }
             });
         },
         /**
