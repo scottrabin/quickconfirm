@@ -66,6 +66,35 @@
 	</pre>
 	<!-- end dynamic styles -->
 
+	<!-- positioning -->
+	<h3>Positioning</h3>
+	<p>quickConfirm elements can be rendered on <code>top</code> or <code>bottom</code> of, or to the <code>left</code> or <code>right</code> of, any triggering element.</p>
+	
+	<div class="center">
+	  <button id="left-of-trigger" rel="#left-of" style="float: right;">On The Left</button>
+	  <button id="right-of-trigger" rel="#right-of" style="float: left;">On The Right</button>
+	  <button id="top-of-trigger" rel="#top-of">On Top Of</button>
+	</div>
+	<pre class="brush: js" id="top-of">
+	  $('#top-of-trigger').quickConfirm({
+	    position : 'top',
+	    contents : 'This dialog is rendered on the top'
+	  });
+	</pre>
+	<pre class="brush: js" id="right-of">
+	  $('#right-of-trigger').quickConfirm({
+	    position : 'right',
+        contents : 'This dialog is rendered on the right'
+	  });
+	</pre>
+	<pre class="brush: js" id="left-of">
+	  $('#left-of-trigger').quickConfirm({
+	    position : 'left',
+        contents : 'This dialog is rendered on the left'
+	  });
+	</pre>
+
+
   </div>
 
   <script type="text/javascript">
