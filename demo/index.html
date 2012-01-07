@@ -15,6 +15,9 @@
   <script type="text/javascript" src="./js/shBrushJScript.js"></script>
   <link href="./css/shCore.css" rel="stylesheet" type="text/css" />
   <link href="./css/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+  <!-- underscore -->
+  <script type="text/javascript" src="./js/underscore-min.js"></script>
 </head>
 <body>
 
@@ -113,8 +116,8 @@
 	<!-- end arrows -->
 
 	<!-- templating -->
-	<h3>Form Controls</h3>
-	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code> with such form controls:</p>
+	<h3>Dialog Contents and Templates</h3>
+	<p>A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code> with such form controls:</p>
 
 	<div class="center">
 	  <button id="content-template-trigger" rel="#content-template">Templated Contents</button>
@@ -128,9 +131,45 @@
 	    }
 	  });
 	</pre>
+
+	<p>The templating system is completely customizable; the default template can be changed (using <code>{{variableName}}</code> to indicate insertion points for object properties), replacing property names or rendering an entirely different template.</p>
+	<div class="center">
+	  <button id="modified-template-trigger" rel="#modified-template">Modified Template</button>
+	</div>
+	<pre class="brush: js" id="modified-template">
+	  $('#modified-template-trigger').quickConfirm({
+	    template : '&lt;span style="color: red;"&gt;{{question}}&lt;/span&gt;' +
+	               '&lt;a href="#" style="display: block;" onclick="$(this).quickConfirm(\'cancel\'); return false;"&gt;{{no}}&lt;/a&gt;' +
+	               '&lt;a href="#" style="display: block;" onclick="$(this).quickConfirm(\'proceed\'); return false;"&gt;{{go}}&lt;/a&gt;',
+	    contents : {
+	      question : "Newly rendered text",
+	      go : "Proceed is now a link",
+	      no : "Close this dialog"
+	    }
+	  });
+	</pre>
+
+	<p>The template rendering function itself can be changed as well - quickConfirm will use the <code>renderTemplate</code> function to generate the inner HTML string from the <code>template</code> if <code>contents</code> is a plain object. <code>renderTemplate</code> takes as parameters <code>(template, object)</code>; this is fully compatible with the template function from Underscore.js, which can be inserted into quickConfirm with little difficulty.</p>
+	<div class="center">
+	  <button id="underscore-template-trigger" rel="#underscore-template">Underscore Template</button>
+	</div>
+	<pre class="brush: js" id="underscore-template">
+	  $('#underscore-template-trigger').quickConfirm({
+	    template : '&lt;span style="display: block;"&gt;&lt;%= underText %&gt;&lt;/span&gt;' + 
+	               '&lt;% _.each( list, function( item ){ %&gt;' +
+                     '&lt;span&gt;&lt;%= item %&gt;&lt;/span&gt;' +
+                   '&lt;% }); %&gt;',
+	    renderTemplate : _.template,
+	    contents : {
+	      underText : 'Underscore.js templates!',
+	      list : [1, 2, 'three']
+	    }
+	  });
+	</pre>
 	<!-- end templating -->
 
 	<!-- form controls and events -->
+	<h3>Dialog Event Handlers</h3>
 	<p>Custom event handlers can also be bound to the form in one of two ways. The first is to pass the callback functions as properties on the <code>options</code> parameter:</p>
 	<div class="center">
 	  <button id="special-proceed-trigger" rel="#special-proceed">Proceed Handler</button>
@@ -171,6 +210,20 @@
 	      alert("This will still show, and the dialog will still hide. " +
                 "The default functions are not overridden here.");
 	    });
+	</pre>
+	<!-- end form controls and events -->
+
+	<!-- closeOnBlur -->
+	<h3>Close Behavior</h3>
+	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. For particularly important dialogs, this behavior can be disabled by setting <code>closeOnBlur</code> to false:</p>
+
+	<div class="center">
+	  <button id="force-close-trigger" rel="#force-close">Force Close</button>
+	</div>
+	<pre class="brush: js" id="force-close">
+	  $('#force-close-trigger').quickConfirm({
+	    closeOnBlur : false
+	  });
 	</pre>
   </div>
 
