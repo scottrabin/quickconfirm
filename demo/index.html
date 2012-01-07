@@ -94,7 +94,9 @@
         contents : 'This dialog is rendered on the left'
 	  });
 	</pre>
+	<!-- end positioning -->
 
+	<!-- arrows -->
 	<h3>Arrow Properties</h3>
 	<p>The all-CSS arrow has <code>width</code> and <code>height</code> properties that can be customized to suit your needs.</p>
 	<div class="center">
@@ -108,9 +110,11 @@
 	    contents : "This dialog has a very tall arrow."
 	  });
 	</pre>
+	<!-- end arrows -->
 
+	<!-- templating -->
 	<h3>Form Controls</h3>
-	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code>:</p>
+	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code> with such form controls:</p>
 
 	<div class="center">
 	  <button id="content-template-trigger" rel="#content-template">Templated Contents</button>
@@ -124,7 +128,50 @@
 	    }
 	  });
 	</pre>
+	<!-- end templating -->
 
+	<!-- form controls and events -->
+	<p>Custom event handlers can also be bound to the form in one of two ways. The first is to pass the callback functions as properties on the <code>options</code> parameter:</p>
+	<div class="center">
+	  <button id="special-proceed-trigger" rel="#special-proceed">Proceed Handler</button>
+	</div>
+	<pre class="brush: js" id="special-proceed">
+	  $('#special-proceed-trigger').quickConfirm({
+	    onproceed : function(){
+	      alert("Okay.");
+	    }
+	  });
+	</pre>
+	<p>Note that overriding the <code>onproceed</code> parameter in the previous example didn't close the dialog when the proceed button was clicked. The default behavior is to close the dialog; overriding callbacks must manually close the dialog.</p>
+	<div class="center">
+	  <button id="special-cancel-trigger" rel="#special-cancel">Cancel Handler</button>
+	</div>
+	<pre class="brush: js" id="special-cancel">
+	  $('#special-cancel-trigger').quickConfirm({
+	    oncancel : function(){
+	      alert("The dialog was canceled.");
+	      // `this` refers to the quickConfirm dialog element
+	      $(this).quickConfirm('close');
+	    }
+	  });
+	</pre>
+
+	<p>The second way to attach event handlers to the quickConfirm dialog is to directly bind callback functions to the <code>proceed</code> and <code>cancel</code> events on the dialog:</p>
+
+	<div class="center">
+	  <button id="bind-proceed-trigger" rel="#bind-proceed">Bind Proceed</button>
+	</div>
+	<pre class="brush: js" id="bind-proceed">
+	  // no parameters are passed here
+	  $('#bind-proceed-trigger').quickConfirm({});
+
+	  // get the dialog and bind an event to it
+	  $('#bind-proceed-trigger').quickConfirm('dialog')
+	    .bind( 'proceed', function(){
+	      alert("This will still show, and the dialog will still hide. " +
+                "The default functions are not overridden here.");
+	    });
+	</pre>
   </div>
 
   <script type="text/javascript">
