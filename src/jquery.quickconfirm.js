@@ -259,6 +259,9 @@
                     quickConfirmElement.css( marg );
                 }
             });
+
+            // jQuery chain
+            return this;
         },
         /**
          * Replaces the default options for all quickConfirm dialogs
