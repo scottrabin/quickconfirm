@@ -2,16 +2,74 @@
 <html>
 <head>
   <title>quickConfirm : jQuery Plugin Demonstration</title>
+  <link href="./css/demo.css" rel="stylesheet" type="text/css" />
+
+  <!-- jQuery -->
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+  <!-- plugin -->
   <script type="text/javascript" src="../src/jquery.quickconfirm.js"></script>
   <script type="text/javascript" src="./demo.js"></script>
-  <link rel="stylesheet" type="text/css" href="../src/jquery.quickconfirm.css" />
+
+  <!-- syntax highlighting -->
+  <script type="text/javascript" src="./js/shCore.js"></script>
+  <script type="text/javascript" src="./js/shBrushJScript.js"></script>
+  <link href="./css/shCore.css" rel="stylesheet" type="text/css" />
+  <link href="./css/shThemeDefault.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
-  <h1>quickConfirm Plugin Demonstration</h1>
-  <p></p>
-  <div class="clickquick">Click here to trigger the dialog</div>
+  <div id="contents">
+	<h1>quickConfirm Plugin Demonstration</h1>
 
+	<!-- basics -->
+	<h3>The Basics</h3>
+	<p>The quickConfirm jQuery plugin allows you to unobtrusively ask users for confirmation without disturbing the workflow of your site. It can be attached to any element, positioned as needed, rendered with any content, and works in most browsers.</p>
+	<p>The most compact call to jQuery.quickConfirm requires a <code>contents</code> attribute. Try it out on the button below:</p>
+
+	<div class="center">
+	  <button id="compact-trigger" rel="#compact">Try quickConfirm!</button>
+	</div>
+	<pre class="brush: js" id="compact">
+	  $('#compact-trigger').quickConfirm({
+        contents : "This dialog has all default options enabled. " +
+                   "Click anywhere outside of this dialog to close it."
+	  });
+	</pre>
+	<!-- end basics -->
+
+	<!-- dynamic styles -->
+	<h3>No Pre-Defined Styles</h3>
+	<p>Many jQuery plugins require attaching a stylesheet to your site to provide basic functionality for the plugin elements. quickConfirm does not require any external stylesheet; instead of providing a default set of styles that will likely need to be customized, quickConfirm uses computed styles to appropriately style itself. It can easily adjust to global stylesheets or per-element custom styles with a minimum of effort.</p>
+
+	<div class="center">
+	  <button id="blue-border-trigger" rel="#blue-border">Blue Border</button>
+	</div>
+	<pre class="brush: js" id="blue-border">
+	  $('#blue-border-trigger').quickConfirm({
+        className : 'blue-border',
+        contents : "The global stylesheet applies a blue border to the " +
+                   "dialog element; notice how the arrow is also blue."
+	  });
+	</pre>
+
+	<div class="center">
+	  <button id="green-border-trigger" rel="#green-border">Green Border</button>
+	</div>
+	<pre class="brush: js" id="green-border">
+	  $('#green-border-trigger').quickConfirm({
+	    css : {
+	      borderColor : 'green'
+	    },
+	    contents : "CSS declarations can be passed directly to the " +
+	               "quickConfirm function to be applied on the element."
+	    });
+	</pre>
+	<!-- end dynamic styles -->
+
+  </div>
+
+  <script type="text/javascript">
+	SyntaxHighlighter.all();
+  </script>
 </body>
 </html>

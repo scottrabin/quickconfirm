@@ -1,0 +1,25 @@
+html, body { height: 100%; margin: 0; padding: 0; }
+
+#contents {
+	width: 800px;
+	margin: 0 auto;
+}
+
+.center {
+	text-align: center;
+}
+
+.quickConfirm {
+	width: 200px;
+	padding: 5px;
+
+	border: 1px solid #ccc;
+	border-radius: 5px;
+
+	text-align: center;
+	background-color: #fff;
+}
+
+.blue-border {
+	border-color: blue;
+}
