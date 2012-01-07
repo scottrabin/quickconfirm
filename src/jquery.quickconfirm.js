@@ -51,6 +51,7 @@
     };
 
     // dynamically determine the equivalent of 'transparent'
+    // (used when automatically determining border/background colors for arrows)
     var transparent = 'transparent';
     $(function(){
         var x = $('<div></div>').appendTo('body').hide().css('backgroundColor', transparent);
@@ -61,18 +62,47 @@
     // arrow style assistance functions
     var arrow = {
         getPosition : function( position, qcEl, width, height, params ){
-            return ( position === 'bottom' ? { left : qcEl.outerWidth() / 2 - width, top : -height } :
-                     null );
+            if( position === 'bottom' ){
+                return {
+                    left : qcEl.outerWidth() / 2 - width,
+                    top : - height
+                };
+            } else if( position === 'top' ){
+                // because of the way outerHeight is calculated, we need to remove the borders
+                return {
+                    left : qcEl.outerWidth() / 2 - width,
+                    top : qcEl.outerHeight() - parseInt( qcEl.css('borderTopWidth'), 10 )
+                        - parseInt( qcEl.css('borderBottomWidth'), 10 )
+                };
+            } else if( position === 'right' ){
+                return {
+                    left : - width,
+                    top : qcEl.outerHeight() / 2 - height
+                };
+            } else if( position === 'left' ){
+                // because of the way outerWidth is calculated, we need to remove the borders
+                return {
+                    left : qcEl.outerWidth() - parseInt( qcEl.css('borderLeftWidth'), 10 )
+                        - parseInt( qcEl.css('borderRightWidth'), 10 ),
+                    top : qcEl.outerHeight() / 2 - height
+                };
+            }
         },
         getBorderColor : function( position, color ){
             var bc = ['transparent', 'transparent', 'transparent', 'transparent'];
-            if( position === 'bottom' ){ bc[2] = color; }
+            if(      position === 'bottom' ){ bc[2] = color; }
+            else if( position === 'top'    ){ bc[0] = color; }
+            else if( position === 'right'  ){ bc[1] = color; }
+            else if( position === 'left'   ){ bc[3] = color; }
 
             return bc.join(' ');
         },
         getBorderWidth : function( position, width, height ){
             var bw = [width, width, width, width];
-            if( position === 'bottom' ){ bw[0] = 0; }
+            if(      position === 'bottom' ){ bw[0] = 0; }
+            else if( position === 'top'    ){ bw[2] = 0; }
+            else if( position === 'right'  ){ bw[3] = 0; }
+            else if( position === 'left'   ){ bw[1] = 0; }
 
             return bw.concat('').join('px ');
         },
@@ -140,13 +170,34 @@
                   case 'bottom' :
                     // element will appear beneath the trigger element
                     pos.top = trigger_offset.top + trigger.outerHeight();
+
                     pos.left = trigger_offset.left + trigger.outerWidth() / 2
                         - quickConfirmElement.outerWidth() / 2;
+                    break;
+                  case 'top' :
+                    // element will appear on top of the trigger element
+                    pos.top = trigger_offset.top - quickConfirmElement.outerHeight();
+
+                    pos.left = trigger_offset.left + trigger.outerWidth() / 2
+                        - quickConfirmElement.outerWidth() / 2;
+                    break;
+                  case 'right' :
+                    // element will appear to the right of the trigger element
+                    pos.top = trigger_offset.top + trigger.outerHeight() / 2
+                        - quickConfirmElement.outerHeight() / 2;
+
+                    pos.left = trigger_offset.left + trigger.outerWidth();
+                    break;
+                  case 'left' :
+                    // element will appear to the left of the trigger element
+                    pos.top = trigger_offset.top + trigger.outerHeight() / 2
+                        - quickConfirmElement.outerHeight() / 2;
+
+                    pos.left = trigger_offset.left - quickConfirmElement.outerWidth();
                     break;
                 }
 
                 quickConfirmElement.css( pos );
-                quickConfirmElement.css({ marginTop : '20px' });
 
                 // handle arrows
                 if( null !== params.arrow ){
@@ -184,6 +235,20 @@
                                   color ),
                                 quickConfirmElement )
                         );
+
+                    // adjust the element position to show the arrow
+                    var marg = '';
+                    if( params.position === 'bottom' ){
+                        marg = { marginTop : params.arrow.height + 2 };
+                    } else if( params.position === 'top' ){
+                        marg = { marginTop : - (params.arrow.height + 2) };
+                    } else if( params.position === 'right' ){
+                        marg = { marginLeft : params.arrow.width + 2 };
+                    } else if( params.position === 'left' ){
+                        marg = { marginLeft : - (params.arrow.width + 2) };
+                    }
+
+                    quickConfirmElement.css( marg );
                 }
             });
         },
@@ -223,7 +288,7 @@
                 }
 
                 // see if the element has the 'quickConfirm.element' property
-                if( qc = el.data( 'quickConfirm.element' ) ){
+                if( null != (qc = el.data( 'quickConfirm.element' )) ){
                     // already set qc, just break out of the loop
                     break;
                 }
