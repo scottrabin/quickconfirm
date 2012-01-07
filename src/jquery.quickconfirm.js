@@ -41,13 +41,33 @@
         // close the dialog when anything outside of the dialog is clicked
         closeOnBlur : true,
         // the default contents of the quickConfirm dialog box
-        contents : '<div><span>This is a test</span><a href="#" onclick="$(this).quickConfirm(\'close\'); return false;">Close dialog</a></div>',
+        contents : {
+            // the dialog text
+            text : 'quickConfirm',
+            // the 'proceed' button text
+            proceed : 'Proceed',
+            // the 'cancel' button text
+            cancel : 'Cancel'
+        },
         // the default css options to be set directly on the quickConfirm
         css : {
             position : 'absolute'
         },
+        // the default 'proceed' function
+        onproceed : function(){ $(this).quickConfirm('close'); },
+        // the default 'cancel' function
+        oncancel : function(){ $(this).quickConfirm('close'); },
         // default to 'under the triggering element'
-        position : 'bottom'
+        position : 'bottom',
+        // the generic template to use when rendering objects
+        template : '<span>{{text}}</span><div style="overflow: hidden;"><button style="float: left;" onclick="$(this).quickConfirm(\'cancel\');">{{cancel}}</button><button style="float: right;" onclick="$(this).quickConfirm(\'proceed\');">{{proceed}}</button></div>',
+        // the generic template render function
+        renderTemplate : function( str, obj ){
+            obj = $.isPlainObject( obj ) ? obj : {};
+            return (str || '').replace(/{{(.*?)}}/g, function(m, prop){
+                return obj[prop];
+            });
+        }
     };
 
     // dynamically determine the equivalent of 'transparent'
@@ -98,7 +118,7 @@
             return bc.join(' ');
         },
         getBorderWidth : function( position, width, height ){
-            var bw = [width, width, width, width];
+            var bw = [];
             if( position === 'bottom' ){
                 bw = [ 0, width, height, width ];
             } else if( position === 'top' ){
@@ -127,6 +147,11 @@
         init : function( options ){
             var params = $.extend(true, {}, defaults, options );
 
+            // render a template, if needed (when `contents` is a plain object
+            if( $.isPlainObject( params.contents ) ){
+                params.contents = params.renderTemplate( params.template, params.contents );
+            }
+
             // run an initialization for each matched element
             return this.each( function(){
                 // the triggering element
@@ -148,7 +173,10 @@
                 // append the contents
                     .html( params.contents )
                 // apply the styles
-                    .css( params.css );
+                    .css( params.css )
+                // bind the onproceed and oncancel handlers
+                    .bind( 'proceed', params.onproceed )
+                    .bind( 'cancel',  params.oncancel );
 
                 // add some data to the trigger
                 trigger.data( 'quickConfirm.element', quickConfirmElement );
@@ -289,9 +317,31 @@
          * @return {jQuery} The chainable jQuery object.
          */
         close : function( element ){
-            // find the quick confirm dialog
+            var el = $( element || this ),
+                qc = methods.dialog( el );
+
+            if( qc ){
+                // remove the quickConfirm data property
+                el.removeData( 'quickConfirm.element' );
+                // remove the quickConfirm element
+                qc.remove();
+            }
+
+            // return the chainable jQuery object
+            return this;
+        },
+        /**
+         * Finds the quickConfirm dialog element
+         *
+         * @param {HTMLElement=} element The element to find the associated quickConfirm dialog of.
+         *                               If undefined, defaults to `this`.
+         *
+         * @return {jQuery} The quickConfirm dialog element
+         */
+        dialog : function( element ){
             var el = $( element || this ), qc;
-            // cycle to find the element with the quickConfirm element attached
+
+            // cycle through each element
             while( el.length > 0 ){
                 // if el has 'quickConfirm.trigger', that's the triggering element
                 if( el.data( 'quickConfirm.trigger' ) ){
@@ -308,14 +358,44 @@
                 el = el.parent();
             }
 
-            if( qc ){
-                // remove the quickConfirm data property
-                el.removeData( 'quickConfirm.element' );
-                // remove the quickConfirm element
-                qc.remove();
+            return qc;
+        },
+        /**
+         * Triggers the 'proceed' event on the quickConfirm dialog
+         *
+         * @param {...} var_args Arguments to be passed to the onproceed method
+         *
+         * @return {jQuery} The chainable jQuery element
+         */
+        proceed : function(){
+            // find the dialog
+            var el = methods.dialog( this );
+
+            // if it exists, trigger the 'proceed' event
+            if( el ){
+                el.trigger('proceed');
             }
 
-            // return the chainable jQuery object
+            // chainable jQuery object
+            return this;
+        },
+        /**
+         * Triggers the 'cancel' event on the quickConfirm dialog
+         *
+         * @param {...} var_args Arguments to be passed to the oncancel method
+         *
+         * @return {jQuery} The chainable jQuery element
+         */
+        cancel : function(){
+            // find the dialog
+            var el = methods.dialog( this );
+
+            // if it exists, trigger the 'cancel' event
+            if( el ){
+                el.trigger('cancel');
+            }
+
+            // chainable jQuery object
             return this;
         }
     };

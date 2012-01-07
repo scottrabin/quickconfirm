@@ -31,8 +31,9 @@
 	</div>
 	<pre class="brush: js" id="compact">
 	  $('#compact-trigger').quickConfirm({
-        contents : "This dialog has all default options enabled. " +
-                   "Click anywhere outside of this dialog to close it."
+        contents : {
+	      text : "This dialog has all default options enabled."
+	    }
 	  });
 	</pre>
 	<!-- end basics -->
@@ -105,6 +106,22 @@
 	      height : 20
 	    },
 	    contents : "This dialog has a very tall arrow."
+	  });
+	</pre>
+
+	<h3>Form Controls</h3>
+	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code>:</p>
+
+	<div class="center">
+	  <button id="content-template-trigger" rel="#content-template">Templated Contents</button>
+	</div>
+	<pre class="brush: js" id="content-template">
+	  $('#content-template-trigger').quickConfirm({
+	    contents : {
+	      text : "This is the template text.",
+	      proceed : "Go",
+	      cancel : "Nope"
+	    }
 	  });
 	</pre>
 
