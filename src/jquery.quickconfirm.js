@@ -1,12 +1,15 @@
 /**
+ * @license
  * jQuery Quick Confirm
- * @version 0.0.1
+ * @version 0.9
  * @author Scott Rabin
+ * MIT Licensed (jquery.org/license)
  */
 
 /**
- * @license MIT
  * Copyright (C) 2012 Scott Rabin
+ *
+ * MIT LICENSE
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -292,9 +295,6 @@
                     quickConfirmElement.css( marg );
                 }
             });
-
-            // jQuery chain
-            return this;
         },
         /**
          * Replaces the default options for all quickConfirm dialogs
