@@ -31,9 +31,14 @@
 
     // the global defaults for all quickConfirm dialogs
     var defaults = {
+        // default properties for arrows
+        // note - these are border widths, so they will be doubled for orthogonal directions
         arrow : {
+            // the height of the arrow
             height : 10,
+            // the width of the arrow
             width : 10,
+            // the width of the border
             borderWidth : 1
         },
         // an additional class to add to the quickConfirm element
