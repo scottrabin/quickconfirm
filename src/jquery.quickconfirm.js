@@ -99,10 +99,15 @@
         },
         getBorderWidth : function( position, width, height ){
             var bw = [width, width, width, width];
-            if(      position === 'bottom' ){ bw[0] = 0; }
-            else if( position === 'top'    ){ bw[2] = 0; }
-            else if( position === 'right'  ){ bw[3] = 0; }
-            else if( position === 'left'   ){ bw[1] = 0; }
+            if( position === 'bottom' ){
+                bw = [ 0, width, height, width ];
+            } else if( position === 'top' ){
+                bw = [ height, width, 0, width ];
+            } else if( position === 'right' ){
+                bw = [ height, width, height, 0 ];
+            } else if( position === 'left' ){
+                bw = [ height, 0, height, width ];
+            }
 
             return bw.concat('').join('px ');
         },
