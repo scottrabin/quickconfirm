@@ -2,9 +2,11 @@
 <html>
 <head>
   <title>quickConfirm : jQuery Plugin Demonstration</title>
-
+  
   <!-- jQuery -->
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-git.js"></script>
+  <!-- Syntax Highlighter has a problem with 1.7.1; temporarily switching to jquery nightly until 1.7.2 is out -->
+  <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>-->
   <!-- plugin -->
   <script type="text/javascript" src="./js/jquery.quickconfirm.js"></script>
 
@@ -28,16 +30,19 @@
       $('[rel]').each(function(){
         var code = $( $(this).attr('rel') );
         if( code.length > 0 ){
-          code = code.text();
+          code = code[0].innerHTML;
           $(this).bind( 'click', function() {
             eval( code );
           });
         }
       });
 	});
+
+	$(function(){ SyntaxHighlighter.all(); });
   </script>
 
   <style type="text/css">
+	/* demo page styling */
 	body { margin: 0; padding: 0; }
 
 	#contents {
@@ -52,6 +57,15 @@
 		text-align: center;
 	}
 
+	.syntaxhighlighter {
+	    /* correct irritating scrollbars */
+	    padding: 3px;
+	    /* border */
+	    border: 1px solid #999;
+	    border-radius: 5px;
+	}
+
+	/* quickConfirm plugin styling */
 	.quickConfirm {
 		width: 200px;
 		padding: 5px;
@@ -276,9 +290,5 @@
 	</pre>
 	<!-- end closeOnBlur -->
   </div>
-
-  <script type="text/javascript">
-	SyntaxHighlighter.all();
-  </script>
 </body>
 </html>
