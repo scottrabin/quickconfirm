@@ -33,7 +33,7 @@ Arguments denoted with square brackets [] are considered optional. Default value
 
 #### Methods
 
-######**init** *([options])*
+#####**init** *([options])*
 
 Initializes the quickConfirm dialog using the default parameters, extended by the `options` object (if supplied). Subsequent calls to `init` while the dialog is open will re-render all of the dialog contents, but will not replace the existing dialog element. Events such as `proceed` and `cancel` bound to the dialog element will not be lost when calling `init` multiple times.
 
