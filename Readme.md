@@ -39,27 +39,43 @@ Arguments denoted with square brackets [] are considered optional. Default value
 
 **close** *([element])*
 
-Closes the quickConfirm dialog associated with the `element` (or the current selection, if not defined). If `element` is a child element of the quickConfirm dialog, or is a trigger element of a quickConfirm dialog, then that quickConfirm dialog element will be removed from the DOM. If no quickConfirm dialog can be found, no action will be taken.
+> Closes the quickConfirm dialog associated with the `element` (or the current selection, if not defined). If `element` is a child element of the quickConfirm dialog, or is a trigger element of a quickConfirm dialog, then that quickConfirm dialog element will be removed from the DOM. If no quickConfirm dialog can be found, no action will be taken.
 
 **defaults** *([options])*
 
-If `options` is an object, then the default options for all quickConfirm elements will be extended with the supplied properties via deep copy with `$.extend`. If options is undefined or falsy, the current `defaults` object will be returned.
+> If `options` is an object, then the default options for all quickConfirm elements will be extended with the supplied properties via deep copy with `$.extend`. If options is undefined or falsy, the current `defaults` object will be returned.
 
 **dialog** *([element])*
 
-Returns the quickConfirm dialog element associated with the specified element (or the current selection, if not defined). Associated elements include the trigger element from which the quickConfirm dialog was generated and all descendant elements of the quickConfirm dialog itself (including the dialog). If no quickConfirm dialog can be found, returns `undefined`.
+> Returns the quickConfirm dialog element associated with the specified element (or the current selection, if not defined). Associated elements include the trigger element from which the quickConfirm dialog was generated and all descendant elements of the quickConfirm dialog itself (including the dialog). If no quickConfirm dialog can be found, returns `undefined`.
 
 **proceed** *([args...])*
 
-Triggers the `proceed` event of the quickConfirm dialog.
+> Triggers the `proceed` event of the quickConfirm dialog.
 
 **cancel** *([args...])*
 
-Triggers the `cancel` event of the quickConfirm dialog.
+> Triggers the `cancel` event of the quickConfirm dialog.
+
+---
+
+#### Events
+
+The following events are triggered directly from the quickConfirm dialog element (selectable via `$(selector).quickConfirm('dialog')...`)
+
+**proceed**
+
+> Triggered via `$(selector).quickConfirm('proceed');`. By default, triggered when the `Proceed` button is clicked.
+
+**cancel**
+
+> Triggered via `$(selector).quickConfirm('proceed');`. By default, triggered when the `Cancel` button is clicked.
 
 ---
 
 #### Options
+
+These options may be specified by overwriting the global defaults via `$.fn.quickConfirm( 'defaults', options );` or by passing in a per-instance options hash when initializing a quickConfirm dialog.
 
 ```
 arrow : {
