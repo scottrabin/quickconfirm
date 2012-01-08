@@ -21,6 +21,13 @@
 
   <!-- demo -->
   <script type="text/javascript">
+	function unesc( str ){
+	    var tmp = document.createElement('div');
+	    tmp.innerHTML = str;
+	    var result = tmp.childNodes[0].nodeValue;
+	    tmp.removeChild( tmp.firstChild );
+	    return result;
+	}
 	$(function(){
       $('body')
         .on('click', '.clickquick', function(){
@@ -30,7 +37,7 @@
       $('[rel]').each(function(){
         var code = $( $(this).attr('rel') );
         if( code.length > 0 ){
-          code = code[0].innerHTML;
+          code = unesc(code[0].innerHTML);
           $(this).bind( 'click', function() {
             eval( code );
           });
