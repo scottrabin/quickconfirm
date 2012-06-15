@@ -89,33 +89,6 @@
 
     // arrow style assistance functions
     var arrow = {
-        getPosition : function( position, qcEl, width, height, params ){
-            if( position === 'bottom' ){
-                return {
-                    left : qcEl.outerWidth() / 2 - width,
-                    top : - height
-                };
-            } else if( position === 'top' ){
-                // because of the way outerHeight is calculated, we need to remove the borders
-                return {
-                    left : qcEl.outerWidth() / 2 - width,
-                    top : qcEl.outerHeight() - parseInt( qcEl.css('borderTopWidth'), 10 )
-                        - parseInt( qcEl.css('borderBottomWidth'), 10 )
-                };
-            } else if( position === 'right' ){
-                return {
-                    left : - width,
-                    top : qcEl.outerHeight() / 2 - height
-                };
-            } else if( position === 'left' ){
-                // because of the way outerWidth is calculated, we need to remove the borders
-                return {
-                    left : qcEl.outerWidth() - parseInt( qcEl.css('borderLeftWidth'), 10 )
-                        - parseInt( qcEl.css('borderRightWidth'), 10 ),
-                    top : qcEl.outerHeight() / 2 - height
-                };
-            }
-        },
         getBorderColor : function( position, color ){
             var bc = ['transparent', 'transparent', 'transparent', 'transparent'];
             if(      position === 'bottom' ){ bc[2] = color; }
@@ -140,14 +113,29 @@
             return bw.concat('').join('px ');
         },
         getStyle : function( position, width, height, color, qcEl ){
-            return $.extend({
-                position : 'absolute',
+            return {
+				// required for the angled edges to work
                 height : 0,
                 width: 0,
+
+				// it always appears solid anyway because of the way the border arrow is faked
                 borderStyle : 'solid',
                 borderWidth : arrow.getBorderWidth( position, width, height ),
-                borderColor : arrow.getBorderColor( position, color )
-            }, arrow.getPosition( position, qcEl, width, height ) );
+                borderColor : arrow.getBorderColor( position, color ),
+
+				// position the arrow relative to the container
+                position    : 'absolute',
+				left        : (position === 'bottom' || position === 'top' ? '50%' :
+							   position === 'left' ? '100%' : 0),
+				top         : (position === 'bottom' ? '0' :
+							   position === 'top' ? '100%' : '50%'),
+
+				// adjust the positioning to compensate for the dimensions
+				marginLeft  : -(position === 'top' || position === 'bottom' ? Math.round(width/2) :
+							   position === 'right' ? width :
+							   0),
+				marginTop   : -(position === 'top' ? 0 : height)
+			};
         }
     };
 
