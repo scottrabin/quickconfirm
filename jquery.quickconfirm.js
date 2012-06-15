@@ -76,7 +76,22 @@
                 return obj[prop];
             });
         }
-    };
+    },
+	// Minification
+	TOP = 'top', BOTTOM = 'bottom', RIGHT = 'right', LEFT = 'left',
+	// lookup
+	OPPOSITE = {},
+	CSS_INDEX = {};
+
+	OPPOSITE[TOP]     = BOTTOM;
+	OPPOSITE[BOTTOM]  = TOP;
+	OPPOSITE[RIGHT]   = LEFT;
+	OPPOSITE[LEFT]    = RIGHT;
+	
+	CSS_INDEX[TOP]    = 0;
+	CSS_INDEX[RIGHT]  = 1;
+	CSS_INDEX[BOTTOM] = 2;
+	CSS_INDEX[LEFT]   = 3;
 
     // dynamically determine the equivalent of 'transparent'
     // (used when automatically determining border/background colors for arrows)
@@ -89,30 +104,14 @@
 
     // arrow style assistance functions
     var arrow = {
-        getBorderColor : function( position, color ){
-            var bc = ['transparent', 'transparent', 'transparent', 'transparent'];
-            if(      position === 'bottom' ){ bc[2] = color; }
-            else if( position === 'top'    ){ bc[0] = color; }
-            else if( position === 'right'  ){ bc[1] = color; }
-            else if( position === 'left'   ){ bc[3] = color; }
-
-            return bc.join(' ');
-        },
-        getBorderWidth : function( position, width, height ){
-            var bw = [];
-            if( position === 'bottom' ){
-                bw = [ 0, width, height, width ];
-            } else if( position === 'top' ){
-                bw = [ height, width, 0, width ];
-            } else if( position === 'right' ){
-                bw = [ height, width, height, 0 ];
-            } else if( position === 'left' ){
-                bw = [ height, 0, height, width ];
-            }
-
-            return bw.concat('').join('px ');
-        },
         getStyle : function( position, width, height, color, qcEl ){
+			var borderColor = [ transparent, transparent, transparent, transparent ],
+				borderWidth = [ height, width, height, width ];
+
+			// modify border properties to achieve arrow effect
+			borderColor[CSS_INDEX[position]] = color;
+			borderWidth[CSS_INDEX[OPPOSITE[position]]] = 0;
+
             return {
 				// required for the angled edges to work
                 height : 0,
@@ -120,8 +119,8 @@
 
 				// it always appears solid anyway because of the way the border arrow is faked
                 borderStyle : 'solid',
-                borderWidth : arrow.getBorderWidth( position, width, height ),
-                borderColor : arrow.getBorderColor( position, color ),
+                borderWidth : borderWidth.concat('').join('px '),
+                borderColor : borderColor.join(' '),
 
 				// position the arrow relative to the container
                 position    : 'absolute',
