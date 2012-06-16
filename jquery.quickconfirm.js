@@ -103,40 +103,38 @@
     });
 
     // arrow style assistance functions
-    var arrow = {
-        getStyle : function( position, width, height, color, qcEl ){
-			var borderColor = [ transparent, transparent, transparent, transparent ],
-				borderWidth = [ height, width, height, width ];
+    var getArrowStyle = function( position, width, height, color, qcEl ){
+		var borderColor = [ transparent, transparent, transparent, transparent ],
+		borderWidth = [ height, width, height, width ];
 
-			// modify border properties to achieve arrow effect
-			borderColor[CSS_INDEX[position]] = color;
-			borderWidth[CSS_INDEX[OPPOSITE[position]]] = 0;
+		// modify border properties to achieve arrow effect
+		borderColor[CSS_INDEX[position]] = color;
+		borderWidth[CSS_INDEX[OPPOSITE[position]]] = 0;
 
-            return {
-				// required for the angled edges to work
-                height : 0,
-                width: 0,
+		return {
+			// required for the angled edges to work
+			height : 0,
+			width: 0,
 
-				// it always appears solid anyway because of the way the border arrow is faked
-                borderStyle : 'solid',
-                borderWidth : borderWidth.concat('').join('px '),
-                borderColor : borderColor.join(' '),
+			// it always appears solid anyway because of the way the border arrow is faked
+			borderStyle : 'solid',
+			borderWidth : borderWidth.concat('').join('px '),
+			borderColor : borderColor.join(' '),
 
-				// position the arrow relative to the container
-                position    : 'absolute',
-				left        : (position === 'bottom' || position === 'top' ? '50%' :
-							   position === 'left' ? '100%' : 0),
-				top         : (position === 'bottom' ? '0' :
-							   position === 'top' ? '100%' : '50%'),
+			// position the arrow relative to the container
+			position    : 'absolute',
+			left        : (position === 'bottom' || position === 'top' ? '50%' :
+						   position === 'left' ? '100%' : 0),
+			top         : (position === 'bottom' ? '0' :
+						   position === 'top' ? '100%' : '50%'),
 
-				// adjust the positioning to compensate for the dimensions
-				marginLeft  : -(position === 'top' || position === 'bottom' ? Math.round(width/2) :
-							   position === 'right' ? width :
-							   0),
-				marginTop   : -(position === 'top' ? 0 : height)
-			};
-        }
-    };
+			// adjust the positioning to compensate for the dimensions
+			marginLeft  : -(position === 'top' || position === 'bottom' ? Math.round(width/2) :
+							position === 'right' ? width :
+							0),
+			marginTop   : -(position === 'top' ? 0 : height)
+		};
+	};
 
     var methods = {
         init : function( options ){
@@ -243,7 +241,7 @@
                     arrowEl
                         .addClass( 'quickConfirm-arrow' )
                         .css(
-                            arrow.getStyle(
+                            getArrowStyle(
                                 params.position,
                                 params.arrow.width,
                                 params.arrow.height,
@@ -257,7 +255,7 @@
                     arrowBorderEl
                         .addClass( 'quickConfirm-arrow-border' )
                         .css(
-                            arrow.getStyle(
+                            getArrowStyle(
                                 params.position,
                                 params.arrow.width + params.arrow.borderWidth,
                                 params.arrow.height + params.arrow.borderWidth,
