@@ -80,6 +80,8 @@
 	// Minification
 	TOP = 'top', BOTTOM = 'bottom', RIGHT = 'right', LEFT = 'left',
 	BACKGROUND_COLOR = 'backgroundColor',
+	DATA_QC_ELEMENT = 'quickConfirm.element',
+	DATA_QC_TRIGGER = 'quickConfirm.trigger',
 	// lookup
 	OPPOSITE = {},
 	CSS_INDEX = {},
@@ -161,10 +163,10 @@
 					offset_top = offset[TOP],
                 // the displayed element for the quickConfirm dialog
                 // reuse the old element if it exists
-                    quickConfirmElement = (trigger.data( 'quickConfirm.element' ) || E('div'))
+                    quickConfirmElement = (trigger.data( DATA_QC_ELEMENT ) || E('div'))
 												// apply properties to the quickConfirm element
 												// attach it to the trigger so the dialog can be found
-												.data( 'quickConfirm.trigger', trigger )
+												.data( DATA_QC_TRIGGER, trigger )
 												// append it directly to the body
 												.appendTo( 'body' )
 												// add an appropriate class, plus any user-defined classes
@@ -178,7 +180,7 @@
 												.bind( 'cancel',  params.oncancel );
 
                 // add some data to the trigger
-                trigger.data( 'quickConfirm.element', quickConfirmElement );
+                trigger.data( DATA_QC_ELEMENT, quickConfirmElement );
 
                 // handle the closeOnBlur option
                 if( params.closeOnBlur ){
@@ -272,7 +274,7 @@
 
             if( qc ){
                 // remove the quickConfirm data property
-                el.removeData( 'quickConfirm.element' );
+                el.removeData( DATA_QC_ELEMENT );
                 // remove the quickConfirm element
                 qc.remove();
             }
@@ -294,12 +296,12 @@
             // cycle through each element
             while( el.length > 0 ){
                 // if el has 'quickConfirm.trigger', that's the triggering element
-                if( el.data( 'quickConfirm.trigger' ) ){
-                    el = el.data( 'quickConfirm.trigger' );
+                if( el.data( DATA_QC_TRIGGER ) ){
+                    el = el.data( DATA_QC_TRIGGER );
                 }
 
                 // see if the element has the 'quickConfirm.element' property
-                if( null != (qc = el.data( 'quickConfirm.element' )) ){
+                if( null != (qc = el.data( DATA_QC_ELEMENT )) ){
                     // already set qc, just break out of the loop
                     break;
                 }
