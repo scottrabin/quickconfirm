@@ -188,10 +188,11 @@
                     // but do it after everything else has been done
                     setTimeout( function(){
                         $('body').on('click', function closeQC( event ){
+							var $target = $(event.target);
                             // was the clicked element within the dialog?
-                            if( ($(event.target).closest( quickConfirmElement ).length === 0) &&
+                            if( ($target.closest( quickConfirmElement ).length === 0) &&
                                 // and the trigger wasn't clicked a second time
-                                ($(event.target).closest( trigger ).length === 0)
+                                ($target.closest( trigger ).length === 0)
                               ){
                                 trigger.quickConfirm('close');
                                 $('body').off('click', closeQC);
