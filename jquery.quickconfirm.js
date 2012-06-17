@@ -41,8 +41,8 @@
             height : 10,
             // the width of the arrow
             width : 10,
-            // the width of the border
-            borderWidth : 1
+            // the width of the border - 'auto' means detect automatically
+            borderWidth : 'auto'
         },
         // an additional class to add to the quickConfirm element
         className : '',
@@ -104,7 +104,7 @@
     });
 
     // arrow style assistance functions
-    var getArrowStyle = function( position, width, height, color, qcEl ){
+    var getArrowStyle = function( position, width, height, thickness, color ){
 		var borderColor = [ transparent, transparent, transparent, transparent ],
 		borderWidth = [ height, width, height, width ];
 
@@ -130,7 +130,7 @@
 						   position === TOP ? '100%' : '50%'),
 
 			// adjust the positioning to compensate for the dimensions
-			marginLeft  : -(position === TOP || position === BOTTOM ? Math.round(width/2) :
+			marginLeft  : -(position === TOP || position === BOTTOM ? (width + thickness)/2 :
 							position === RIGHT ? width : 0),
 			marginTop   : -(position === TOP ? 0 : height)
 		};
@@ -214,7 +214,7 @@
 						// minification
 						arrowHeight = params.arrow.height,
 						arrowWidth = params.arrow.width,
-						arrowThickness = params.arrow.borderWidth;
+						arrowThickness = (params.arrow.borderWidth === 'auto' ? parseInt(quickConfirmElement.css('border-' + OPPOSITE[position] + '-width'), 10) : params.arrow.borderWidth);
 
                     quickConfirmElement
 						// append the elements
@@ -222,19 +222,19 @@
 	                    // adjust the element position to show the arrow
 						.css(
 							position_vertical ? 'marginTop' : 'marginLeft',
-							((position_vertical ? arrowHeight : arrowWidth) + 2) * (position === TOP || position === LEFT ? -1 : 1)
+							(position_vertical ? arrowHeight : arrowWidth) * (position === TOP || position === LEFT ? -1 : 1)
 						);
 
                     arrowEl
                         .addClass( 'quickConfirm-arrow' )
                         .css(
-                            getArrowStyle( position, arrowWidth, arrowHeight, quickConfirmElement.css(BACKGROUND_COLOR), quickConfirmElement )
+                            getArrowStyle( position, arrowWidth, arrowHeight, 0, quickConfirmElement.css(BACKGROUND_COLOR) )
                         );
 
                     arrowBorderEl
                         .addClass( 'quickConfirm-arrow-border' )
                         .css(
-                            getArrowStyle( position, arrowWidth + arrowThickness, arrowHeight + arrowThickness, quickConfirmElement.css('border-' + position + '-color'), quickConfirmElement )
+                            getArrowStyle( position, arrowWidth + arrowThickness, arrowHeight + arrowThickness, arrowThickness, quickConfirmElement.css('border-' + position + '-color') )
                         );
                 }
             });
