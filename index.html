@@ -4,11 +4,9 @@
   <title>quickConfirm : jQuery Plugin Demonstration</title>
   
   <!-- jQuery -->
-  <script type="text/javascript" src="http://code.jquery.com/jquery-git.js"></script>
-  <!-- Syntax Highlighter has a problem with 1.7.1; temporarily switching to jquery nightly until 1.7.2 is out -->
-  <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>-->
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <!-- plugin -->
-  <script type="text/javascript" src="./js/jquery.quickconfirm.js"></script>
+  <script type="text/javascript" src="https://github.com/scottrabin/quickconfirm/raw/master/jquery.quickconfirm.js"></script>
 
   <!-- syntax highlighting -->
   <script type="text/javascript" src="./js/shCore.js"></script>
@@ -137,6 +135,19 @@
 	    contents : "CSS declarations can be passed directly to the " +
 	               "quickConfirm function to be applied on the element."
 	    });
+	</pre>
+
+	<div class="center">
+	  <button id="wide-border-trigger" rel="#wide-border">Wide Border</button>
+	</div>
+	<pre class="brush: js" id="wide-border">
+	  $('#wide-border-trigger').quickConfirm({
+	    css : {
+		  borderWidth : 6
+		},
+		contents : "The arrow will even automatically detect the border width of the " +
+				   "quickConfirm dialog element."
+	  });
 	</pre>
 	<!-- end dynamic styles -->
 
