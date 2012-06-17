@@ -213,34 +213,28 @@
 
                 // handle arrows
                 if( null !== params.arrow ){
-                    var arrowEl = E('div'),
-                        arrowBorderEl = E('div'),
-
-						// minification
-						arrowHeight = params.arrow.height,
+					// minification
+					var arrowHeight = params.arrow.height,
 						arrowWidth = params.arrow.width,
 						arrowThickness = (params.arrow.borderWidth === 'auto' ? parseInt(quickConfirmElement.css('border-' + OPPOSITE[position] + '-width'), 10) : params.arrow.borderWidth);
 
                     quickConfirmElement
 						// append the elements
-						.append( arrowBorderEl, arrowEl )
+						.append(
+							// border arrow
+							E('div')
+								.addClass('quickConfirm-arrow-border')
+								.css( getArrowStyle( position, arrowWidth + arrowThickness, arrowHeight + arrowThickness, arrowThickness, quickConfirmElement.css('border-' + OPPOSITE[position] + '-color') ) ),
+							// interior element
+							E('div')
+								.addClass('quickConfirm-arrow')
+								.css( getArrowStyle( position, arrowWidth, arrowHeight, 0, quickConfirmElement.css(BACKGROUND_COLOR)))
+						)
 	                    // adjust the element position to show the arrow
 						.css(
 							position_vertical ? 'marginTop' : 'marginLeft',
 							(position_vertical ? arrowHeight : arrowWidth) * (position === TOP || position === LEFT ? -1 : 1)
 						);
-
-                    arrowEl
-                        .addClass( 'quickConfirm-arrow' )
-                        .css(
-                            getArrowStyle( position, arrowWidth, arrowHeight, 0, quickConfirmElement.css(BACKGROUND_COLOR) )
-                        );
-
-                    arrowBorderEl
-                        .addClass( 'quickConfirm-arrow-border' )
-                        .css(
-                            getArrowStyle( position, arrowWidth + arrowThickness, arrowHeight + arrowThickness, arrowThickness, quickConfirmElement.css('border-' + position + '-color') )
-                        );
                 }
             });
         },
