@@ -82,7 +82,9 @@
 	BACKGROUND_COLOR = 'backgroundColor',
 	// lookup
 	OPPOSITE = {},
-	CSS_INDEX = {};
+	CSS_INDEX = {},
+	// helpers
+	E = function(tag) { return $(document.createElement(tag)); };
 
 	OPPOSITE[TOP]     = BOTTOM;
 	OPPOSITE[BOTTOM]  = TOP;
@@ -98,7 +100,7 @@
     // (used when automatically determining border/background colors for arrows)
     var transparent = 'transparent';
     $(function(){
-        var x = $('<div></div>').appendTo('body').hide().css(BACKGROUND_COLOR, transparent);
+        var x = E('div').appendTo('body').hide().css(BACKGROUND_COLOR, transparent);
         transparent = x.css(BACKGROUND_COLOR);
         x.remove();
     });
@@ -159,7 +161,7 @@
 					offset_top = offset[TOP],
                 // the displayed element for the quickConfirm dialog
                 // reuse the old element if it exists
-                    quickConfirmElement = (trigger.data( 'quickConfirm.element' ) || $( document.createElement('div') ))
+                    quickConfirmElement = (trigger.data( 'quickConfirm.element' ) || E('div'))
 												// apply properties to the quickConfirm element
 												// attach it to the trigger so the dialog can be found
 												.data( 'quickConfirm.trigger', trigger )
@@ -208,8 +210,8 @@
 
                 // handle arrows
                 if( null !== params.arrow ){
-                    var arrowEl = $( document.createElement('div') ),
-                        arrowBorderEl = $( document.createElement('div') ),
+                    var arrowEl = E('div'),
+                        arrowBorderEl = E('div'),
 
 						// minification
 						arrowHeight = params.arrow.height,
