@@ -286,26 +286,12 @@
          * @return {jQuery} The quickConfirm dialog element
          */
         dialog : function( element ){
-            var el = $( element || this ), qc;
+			var el = $( element || this ), qc;
 
-            // cycle through each element
-            while( el.length > 0 ){
-                // if el has 'quickConfirm.trigger', that's the triggering element
-                if( el.data( DATA_QC_TRIGGER ) ){
-                    el = el.data( DATA_QC_TRIGGER );
-                }
+			// cycle through each element to find the one with a quickConfirm element attached
+			while( el && !(qc = el.data( DATA_QC_ELEMENT )) && (el = el.data( DATA_QC_TRIGGER ) || el.parent())) {};
 
-                // see if the element has the 'quickConfirm.element' property
-                if( null != (qc = el.data( DATA_QC_ELEMENT )) ){
-                    // already set qc, just break out of the loop
-                    break;
-                }
-
-                // no quickConfirm attributes found; try the parent
-                el = el.parent();
-            }
-
-            return qc;
+			return qc;
         },
         /**
          * Triggers the 'proceed' event on the quickConfirm dialog
