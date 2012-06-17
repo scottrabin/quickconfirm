@@ -79,6 +79,7 @@
     },
 	// Minification
 	TOP = 'top', BOTTOM = 'bottom', RIGHT = 'right', LEFT = 'left',
+	BACKGROUND_COLOR = 'backgroundColor',
 	// lookup
 	OPPOSITE = {},
 	CSS_INDEX = {};
@@ -97,8 +98,8 @@
     // (used when automatically determining border/background colors for arrows)
     var transparent = 'transparent';
     $(function(){
-        var x = $('<div></div>').appendTo('body').hide().css('backgroundColor', transparent);
-        transparent = x.css('backgroundColor');
+        var x = $('<div></div>').appendTo('body').hide().css(BACKGROUND_COLOR, transparent);
+        transparent = x.css(BACKGROUND_COLOR);
         x.remove();
     });
 
@@ -123,22 +124,25 @@
 
 			// position the arrow relative to the container
 			position    : 'absolute',
-			left        : (position === 'bottom' || position === 'top' ? '50%' :
-						   position === 'left' ? '100%' : 0),
-			top         : (position === 'bottom' ? '0' :
-						   position === 'top' ? '100%' : '50%'),
+			left        : (position === BOTTOM || position === TOP ? '50%' :
+						   position === LEFT ? '100%' : 0),
+			top         : (position === BOTTOM ? '0' :
+						   position === TOP ? '100%' : '50%'),
 
 			// adjust the positioning to compensate for the dimensions
-			marginLeft  : -(position === 'top' || position === 'bottom' ? Math.round(width/2) :
-							position === 'right' ? width :
-							0),
-			marginTop   : -(position === 'top' ? 0 : height)
+			marginLeft  : -(position === TOP || position === BOTTOM ? Math.round(width/2) :
+							position === RIGHT ? width : 0),
+			marginTop   : -(position === TOP ? 0 : height)
 		};
 	};
 
     var methods = {
         init : function( options ){
-            var params = $.extend(true, {}, defaults, options );
+            var params = $.extend(true, {}, defaults, options ),
+
+				// minification
+				position = params.position,
+				position_vertical = (position === TOP || position === BOTTOM);
 
             // render a template, if needed (when `contents` is a plain object
             if( $.isPlainObject( params.contents ) ){
@@ -151,25 +155,25 @@
                 var trigger = $(this),
                 // for positioning
                     offset = trigger.offset(),
+					offset_left = offset[LEFT],
+					offset_top = offset[TOP],
                 // the displayed element for the quickConfirm dialog
                 // reuse the old element if it exists
-                    quickConfirmElement = trigger.data( 'quickConfirm.element' ) || $( document.createElement('div') );
-
-                // apply properties to the quickConfirm element
-                quickConfirmElement
-                // attach it to the trigger so the dialog can be found
-                    .data( 'quickConfirm.trigger', trigger )
-                // append it directly to the body
-                    .appendTo( 'body' )
-                // add an appropriate class, plus any user-defined classes
-                    .addClass( 'quickConfirm' ).addClass( params.className )
-                // append the contents
-                    .html( params.contents )
-                // apply the styles
-                    .css( params.css )
-                // bind the onproceed and oncancel handlers
-                    .bind( 'proceed', params.onproceed )
-                    .bind( 'cancel',  params.oncancel );
+                    quickConfirmElement = (trigger.data( 'quickConfirm.element' ) || $( document.createElement('div') ))
+												// apply properties to the quickConfirm element
+												// attach it to the trigger so the dialog can be found
+												.data( 'quickConfirm.trigger', trigger )
+												// append it directly to the body
+												.appendTo( 'body' )
+												// add an appropriate class, plus any user-defined classes
+												.addClass( 'quickConfirm' ).addClass( params.className )
+												// append the contents
+												.html( params.contents )
+												// apply the styles
+												.css( params.css )
+												// bind the onproceed and oncancel handlers
+												.bind( 'proceed', params.onproceed )
+												.bind( 'cancel',  params.oncancel );
 
                 // add some data to the trigger
                 trigger.data( 'quickConfirm.element', quickConfirmElement );
@@ -193,91 +197,45 @@
                 }
 
                 // handle positioning of the element
-                var pos = { top : 0, left : 0 },
-                    trigger_offset = trigger.offset();
-                switch( params.position ){
-                  case 'bottom' :
-                    // element will appear beneath the trigger element
-                    pos.top = trigger_offset.top + trigger.outerHeight();
-
-                    pos.left = trigger_offset.left + trigger.outerWidth() / 2
-                        - quickConfirmElement.outerWidth() / 2;
-                    break;
-                  case 'top' :
-                    // element will appear on top of the trigger element
-                    pos.top = trigger_offset.top - quickConfirmElement.outerHeight();
-
-                    pos.left = trigger_offset.left + trigger.outerWidth() / 2
-                        - quickConfirmElement.outerWidth() / 2;
-                    break;
-                  case 'right' :
-                    // element will appear to the right of the trigger element
-                    pos.top = trigger_offset.top + trigger.outerHeight() / 2
-                        - quickConfirmElement.outerHeight() / 2;
-
-                    pos.left = trigger_offset.left + trigger.outerWidth();
-                    break;
-                  case 'left' :
-                    // element will appear to the left of the trigger element
-                    pos.top = trigger_offset.top + trigger.outerHeight() / 2
-                        - quickConfirmElement.outerHeight() / 2;
-
-                    pos.left = trigger_offset.left - quickConfirmElement.outerWidth();
-                    break;
-                }
-
-                quickConfirmElement.css( pos );
+                quickConfirmElement.css( {
+						top  : (position === BOTTOM ? offset_top + trigger.outerHeight() : // bottom of == trigger element location plus it's height
+								position === TOP    ? offset_top - quickConfirmElement.outerHeight() : // top of == trigger element location less the height of the qc dialog
+													  offset_top + ( trigger.outerHeight() - quickConfirmElement.outerHeight() ) / 2) // otherwise, halfway point
+					  , left : (position === LEFT   ? offset_left - quickConfirmElement.outerWidth() : // left of == trigger element less the width of the qc dialog
+								position === RIGHT  ? offset_left + trigger.outerWidth() : // right of == trigger element offset plus it's width
+													  offset_left + ( trigger.outerWidth() - quickConfirmElement.outerWidth() ) / 2) // otherwise, halfway
+					} );
 
                 // handle arrows
                 if( null !== params.arrow ){
                     var arrowEl = $( document.createElement('div') ),
-                        arrowBorderEl = $( document.createElement('div') );
+                        arrowBorderEl = $( document.createElement('div') ),
 
-                    // append the elements
-                    quickConfirmElement.append( arrowBorderEl, arrowEl );
+						// minification
+						arrowHeight = params.arrow.height,
+						arrowWidth = params.arrow.width,
+						arrowThickness = params.arrow.borderWidth;
 
-                    // determine the arrow internal color
-                    var color = arrowEl.css('backgroundColor');
+                    quickConfirmElement
+						// append the elements
+						.append( arrowBorderEl, arrowEl )
+	                    // adjust the element position to show the arrow
+						.css(
+							position_vertical ? 'marginTop' : 'marginLeft',
+							((position_vertical ? arrowHeight : arrowWidth) + 2) * (position === TOP || position === LEFT ? -1 : 1)
+						);
+
                     arrowEl
                         .addClass( 'quickConfirm-arrow' )
                         .css(
-                            getArrowStyle(
-                                params.position,
-                                params.arrow.width,
-                                params.arrow.height,
-                                (color === transparent ?
-                                 quickConfirmElement.css('backgroundColor') :
-                                 color),
-                                quickConfirmElement )
+                            getArrowStyle( position, arrowWidth, arrowHeight, quickConfirmElement.css(BACKGROUND_COLOR), quickConfirmElement )
                         );
 
-                    color = arrowBorderEl.css('backgroundColor');
                     arrowBorderEl
                         .addClass( 'quickConfirm-arrow-border' )
                         .css(
-                            getArrowStyle(
-                                params.position,
-                                params.arrow.width + params.arrow.borderWidth,
-                                params.arrow.height + params.arrow.borderWidth,
-                                ( color === transparent ?
-                                  quickConfirmElement.css('border' + params.position.substr(0,1).toUpperCase() + params.position.substr(1) + 'Color') :
-                                  color ),
-                                quickConfirmElement )
+                            getArrowStyle( position, arrowWidth + arrowThickness, arrowHeight + arrowThickness, quickConfirmElement.css('border-' + position + '-color'), quickConfirmElement )
                         );
-
-                    // adjust the element position to show the arrow
-                    var marg = '';
-                    if( params.position === 'bottom' ){
-                        marg = { marginTop : params.arrow.height + 2 };
-                    } else if( params.position === 'top' ){
-                        marg = { marginTop : - (params.arrow.height + 2) };
-                    } else if( params.position === 'right' ){
-                        marg = { marginLeft : params.arrow.width + 2 };
-                    } else if( params.position === 'left' ){
-                        marg = { marginLeft : - (params.arrow.width + 2) };
-                    }
-
-                    quickConfirmElement.css( marg );
                 }
             });
         },
