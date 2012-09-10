@@ -1,4 +1,5 @@
 pygments: true
 
-BASE_PATH: ''
-#BASE_PATH: http://scottrabin.com/quickconfirm
+baseurl: /quickconfirm
+source: source
+destination: _site
