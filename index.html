@@ -1,312 +1,229 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>quickConfirm : jQuery Plugin Demonstration</title>
-  
-  <!-- jQuery -->
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <!-- plugin -->
-  <script type="text/javascript" src="https://github.com/scottrabin/quickconfirm/raw/master/jquery.quickconfirm.js"></script>
+---
+layout: default
+title: "quickConfirm : jQuery Plugin Demonstration"
+scripts:
+  - http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.js
+  - vendor/underscore/underscore.js
+  - http://localhost/projects/quickconfirm/master/jquery.quickconfirm.js
+styles:
+  - asset/quickconfirm.css
+  - asset/pygmentize.css
+---
+<h1>quickConfirm Plugin Demonstration</h1>
 
-  <!-- syntax highlighting -->
-  <script type="text/javascript" src="./js/shCore.js"></script>
-  <script type="text/javascript" src="./js/shBrushJScript.js"></script>
-  <link href="./css/shCore.css" rel="stylesheet" type="text/css" />
-  <link href="./css/shThemeDefault.css" rel="stylesheet" type="text/css" />
+<!-- basics -->
+<h3>The Basics</h3>
+<p>The quickConfirm jQuery plugin allows you to unobtrusively ask users for confirmation without disturbing the workflow of your site. It can be attached to any element, positioned as needed, rendered with any content, and works in most browsers.</p>
+<p>The most compact call to jQuery.quickConfirm requires a <code>contents</code> attribute. Try it out on the button below:</p>
 
-  <!-- underscore -->
-  <script type="text/javascript" src="./js/underscore-min.js"></script>
+<div class="center">
+    <button id="compact">Try quickConfirm!</button>
+</div>
+{% bind_code compact %}
+$('#compact').quickConfirm({
+    contents : {
+        text : "This dialog has all default options enabled."
+    }
+});
+{% endbind_code %}
+<!-- end basics -->
 
-  <!-- demo -->
-  <script type="text/javascript">
-	function unesc( str ){
-	    var tmp = document.createElement('div');
-	    tmp.innerHTML = str;
-	    var result = tmp.childNodes[0].nodeValue;
-	    tmp.removeChild( tmp.firstChild );
-	    return result;
-	}
-	$(function(){
-      $('body')
-        .on('click', '.clickquick', function(){
-          $(this).quickConfirm();
-        });
+<!-- dynamic styles -->
+<h3>No Pre-Defined Styles</h3>
+<p>Many jQuery plugins require attaching a stylesheet to your site to provide basic functionality for the plugin elements. quickConfirm does not require any external stylesheet; instead of providing a default set of styles that will likely need to be customized, quickConfirm uses computed styles to appropriately style itself. It can easily adjust to global stylesheets or per-element custom styles with a minimum of effort.</p>
 
-      $('[rel]').each(function(){
-        var code = $( $(this).attr('rel') );
-        if( code.length > 0 ){
-          code = unesc(code[0].innerHTML);
-          $(this).bind( 'click', function() {
-            eval( code );
-          });
-        }
-      });
-	});
+<div class="center">
+    <button id="blue-border">Blue Border</button>
+</div>
+{% bind_code blue-border %}
+$('#blue-border').quickConfirm({
+    className : 'blue-border',
+    contents :  "The global stylesheet applies a blue border to the " +
+                "dialog element; notice how the arrow is also blue."
+});
+{% endbind_code %}
 
-	$(function(){ SyntaxHighlighter.all(); });
-  </script>
+<div class="center">
+    <button id="green-border">Green Border</button>
+</div>
+{% bind_code green-border %}
+$('#green-border').quickConfirm({
+    css : {
+        borderColor : 'green'
+    },
+    contents :  "CSS declarations can be passed directly to the " +
+                "quickConfirm function to be applied on the element."
+});
+{% endbind_code %}
 
-  <style type="text/css">
-	/* demo page styling */
-	body { margin: 0; padding: 0; }
+<div class="center">
+    <button id="wide-border">Wide Border</button>
+</div>
+{% bind_code wide-border %}
+$('#wide-border').quickConfirm({
+    css : {
+        borderWidth : 6
+    },
+    contents : "The arrow will even automatically detect the border width of the " +
+               "quickConfirm dialog element."
+});
+{% endbind_code %}
+<!-- end dynamic styles -->
 
-	#contents {
-		width: 800px;
-		margin: 0 auto;
-		min-height: 100%;
-	
-		padding-bottom: 30px;
-	}
+<!-- positioning -->
+<h3>Positioning</h3>
+<p>quickConfirm elements can be rendered on <code>top</code> or <code>bottom</code> of, or to the <code>left</code> or <code>right</code> of, any triggering element.</p>
 
-	.center {
-		text-align: center;
-	}
+<div class="center">
+    <button id="left-of" style="float: right;">On The Left</button>
+    <button id="right-of" style="float: left;">On The Right</button>
+    <button id="top-of">On Top Of</button>
+</div>
+{% bind_code top-of %}
+$('#top-of').quickConfirm({
+    position : 'top',
+    contents : 'This dialog is rendered on the top'
+});
+{% endbind_code %}
+{% bind_code right-of %}
+$('#right-of').quickConfirm({
+    position : 'right',
+    contents : 'This dialog is rendered on the right'
+});
+{% endbind_code %}
+{% bind_code left-of %}
+$('#left-of').quickConfirm({
+    position : 'left',
+    contents : 'This dialog is rendered on the left'
+});
+{% endbind_code %}
+<!-- end positioning -->
 
-	.syntaxhighlighter {
-	    /* correct irritating scrollbars */
-	    padding: 3px;
-	    /* border */
-	    border: 1px solid #999;
-	    border-radius: 5px;
-	}
+<!-- arrows -->
+<h3>Arrow Properties</h3>
+<p>The all-CSS arrow has <code>width</code> and <code>height</code> properties that can be customized to suit your needs.</p>
+<div class="center">
+    <button id="tall-arrow">A Tall Arrow</button>
+</div>
+{% bind_code tall-arrow %}
+$('#tall-arrow').quickConfirm({
+    arrow : {
+        height : 20
+    },
+    contents : "This dialog has a very tall arrow."
+});
+{% endbind_code %}
+<!-- end arrows -->
 
-	/* quickConfirm plugin styling */
-	.quickConfirm {
-		width: 200px;
-		padding: 5px;
+<!-- templating -->
+<h3>Dialog Contents and Templates</h3>
+<p>A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code> with such form controls:</p>
 
-		border: 1px solid #777;
-		border-radius: 5px;
+<div class="center">
+    <button id="content-template">Templated Contents</button>
+</div>
+{% bind_code content-template %}
+$('#content-template').quickConfirm({
+    contents : {
+        text    : "This is the template text.",
+        proceed : "Go",
+        cancel  : "Nope"
+    }
+});
+{% endbind_code %}
 
-		text-align: center;
-		background-color: #fff;
-	}
+<p>The templating system is completely customizable; the default template can be changed (using <code>{{variableName}}</code> to indicate insertion points for object properties), replacing property names or rendering an entirely different template.</p>
+<div class="center">
+    <button id="modified-template">Modified Template</button>
+</div>
+{% bind_code modified-template %}
+{% raw %}
+$('#modified-template').quickConfirm({
+    template :  '<span style="color: red;">{{question}}</span>' +
+                '<a href="#" style="display: block;" onclick="$(this).quickConfirm(\'cancel\'); return false;">{{no}}</a>' +
+                '<a href="#" style="display: block;" onclick="$(this).quickConfirm(\'proceed\'); return false;">{{go}}</a>',
+    contents : {
+        question : "Newly rendered text",
+        go : "Proceed is now a link",
+        no : "Close this dialog"
+    }
+});
+{% endraw %}
+{% endbind_code %}
 
-	.blue-border {
-		border-color: blue;
-	}
-  </style>
-</head>
-<body>
+<p>The template rendering function itself can be changed as well - quickConfirm will use the <code>renderTemplate</code> function to generate the inner HTML string from the <code>template</code> if <code>contents</code> is a plain object. <code>renderTemplate</code> takes as parameters <code>(template, object)</code>; this is fully compatible with the template function from Underscore.js, which can be inserted into quickConfirm with little difficulty.</p>
+<div class="center">
+    <button id="underscore-template">Underscore Template</button>
+</div>
+{% bind_code underscore-template %}
+$('#underscore-template').quickConfirm({
+    template :  '<span style="display: block;"><%= text %></span>' +
+                '<% _.each( list, function( item ){ %>' +
+                    '<span><%= item %></span>' +
+                '<% }); %>',
+    renderTemplate : _.template,
+    contents : {
+        text : 'Underscore.js templates!',
+        list : [1, 2, 'three']
+    }
+});
+{% endbind_code %}
+<!-- end templating -->
 
-  <div id="contents">
-	<h1>quickConfirm Plugin Demonstration</h1>
+<!-- form controls and events -->
+<h3>Dialog Event Handlers</h3>
+<p>Custom event handlers can also be bound to the form in one of two ways. The first is to pass the callback functions as properties on the <code>options</code> parameter:</p>
+<div class="center">
+    <button id="special-proceed">Proceed Handler</button>
+</div>
+{% bind_code special-proceed %}
+$('#special-proceed').quickConfirm({
+    onproceed : function(){
+        alert("Okay.");
+    }
+});
+{% endbind_code %}
+<p>Note that overriding the <code>onproceed</code> parameter in the previous example didn't close the dialog when the proceed button was clicked. The default behavior is to close the dialog; overriding callbacks must manually close the dialog.</p>
+<div class="center">
+    <button id="special-cancel">Cancel Handler</button>
+</div>
+{% bind_code special-cancel %}
+$('#special-cancel').quickConfirm({
+    oncancel : function(){
+        alert("The dialog was canceled.");
+        // `this` refers to the quickConfirm dialog element
+        $(this).quickConfirm('close');
+    }
+});
+{% endbind_code %}
 
-	<!-- basics -->
-	<h3>The Basics</h3>
-	<p>The quickConfirm jQuery plugin allows you to unobtrusively ask users for confirmation without disturbing the workflow of your site. It can be attached to any element, positioned as needed, rendered with any content, and works in most browsers.</p>
-	<p>The most compact call to jQuery.quickConfirm requires a <code>contents</code> attribute. Try it out on the button below:</p>
+<p>The second way to attach event handlers to the quickConfirm dialog is to directly bind callback functions to the <code>proceed</code> and <code>cancel</code> events on the dialog:</p>
+<div class="center">
+    <button id="bind-proceed">Bind Proceed</button>
+</div>
+{% bind_code bind-proceed %}
+// no parameters are passed here
+$('#bind-proceed').quickConfirm({});
 
-	<div class="center">
-	  <button id="compact-trigger" rel="#compact">Try quickConfirm!</button>
-	</div>
-	<pre class="brush: js" id="compact">
-	  $('#compact-trigger').quickConfirm({
-        contents : {
-	      text : "This dialog has all default options enabled."
-	    }
-	  });
-	</pre>
-	<!-- end basics -->
+// get the dialog and bind an event to it
+$('#bind-proceed').quickConfirm('dialog')
+    .bind( 'proceed', function(){
+        alert("This will still show, and the dialog will still hide. " +
+              "The default functions are not overridden here.");
+    });
+{% endbind_code %}
+<!-- end form controls and events -->
 
-	<!-- dynamic styles -->
-	<h3>No Pre-Defined Styles</h3>
-	<p>Many jQuery plugins require attaching a stylesheet to your site to provide basic functionality for the plugin elements. quickConfirm does not require any external stylesheet; instead of providing a default set of styles that will likely need to be customized, quickConfirm uses computed styles to appropriately style itself. It can easily adjust to global stylesheets or per-element custom styles with a minimum of effort.</p>
+<!-- closeOnBlur -->
+<h3>Close Behavior</h3>
+<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. For particularly important dialogs, this behavior can be disabled by setting <code>closeOnBlur</code> to false:</p>
 
-	<div class="center">
-	  <button id="blue-border-trigger" rel="#blue-border">Blue Border</button>
-	</div>
-	<pre class="brush: js" id="blue-border">
-	  $('#blue-border-trigger').quickConfirm({
-        className : 'blue-border',
-        contents : "The global stylesheet applies a blue border to the " +
-                   "dialog element; notice how the arrow is also blue."
-	  });
-	</pre>
-
-	<div class="center">
-	  <button id="green-border-trigger" rel="#green-border">Green Border</button>
-	</div>
-	<pre class="brush: js" id="green-border">
-	  $('#green-border-trigger').quickConfirm({
-	    css : {
-	      borderColor : 'green'
-	    },
-	    contents : "CSS declarations can be passed directly to the " +
-	               "quickConfirm function to be applied on the element."
-	    });
-	</pre>
-
-	<div class="center">
-	  <button id="wide-border-trigger" rel="#wide-border">Wide Border</button>
-	</div>
-	<pre class="brush: js" id="wide-border">
-	  $('#wide-border-trigger').quickConfirm({
-	    css : {
-		  borderWidth : 6
-		},
-		contents : "The arrow will even automatically detect the border " +
-				   "width of the quickConfirm dialog element."
-	  });
-	</pre>
-	<!-- end dynamic styles -->
-
-	<!-- positioning -->
-	<h3>Positioning</h3>
-	<p>quickConfirm elements can be rendered on <code>top</code> or <code>bottom</code> of, or to the <code>left</code> or <code>right</code> of, any triggering element.</p>
-	
-	<div class="center">
-	  <button id="left-of-trigger" rel="#left-of" style="float: right;">On The Left</button>
-	  <button id="right-of-trigger" rel="#right-of" style="float: left;">On The Right</button>
-	  <button id="top-of-trigger" rel="#top-of">On Top Of</button>
-	</div>
-	<pre class="brush: js" id="top-of">
-	  $('#top-of-trigger').quickConfirm({
-	    position : 'top',
-	    contents : 'This dialog is rendered on the top'
-	  });
-	</pre>
-	<pre class="brush: js" id="right-of">
-	  $('#right-of-trigger').quickConfirm({
-	    position : 'right',
-        contents : 'This dialog is rendered on the right'
-	  });
-	</pre>
-	<pre class="brush: js" id="left-of">
-	  $('#left-of-trigger').quickConfirm({
-	    position : 'left',
-        contents : 'This dialog is rendered on the left'
-	  });
-	</pre>
-	<!-- end positioning -->
-
-	<!-- arrows -->
-	<h3>Arrow Properties</h3>
-	<p>The all-CSS arrow has <code>width</code> and <code>height</code> properties that can be customized to suit your needs.</p>
-	<div class="center">
-	  <button id="tall-arrow-trigger" rel="#tall-arrow">A Tall Arrow</button>
-	</div>
-	<pre class="brush: js" id="tall-arrow">
-	  $('#tall-arrow-trigger').quickConfirm({
-	    arrow : {
-	      height : 20
-	    },
-	    contents : "This dialog has a very tall arrow."
-	  });
-	</pre>
-	<!-- end arrows -->
-
-	<!-- templating -->
-	<h3>Dialog Contents and Templates</h3>
-	<p>A true confirmation dialog should offer two form controls: a "proceed" button, and a "cancel" button. The quickConfirm plugin offers a default template that will render a small set of parameters passed in <code>contents</code> with such form controls:</p>
-
-	<div class="center">
-	  <button id="content-template-trigger" rel="#content-template">Templated Contents</button>
-	</div>
-	<pre class="brush: js" id="content-template">
-	  $('#content-template-trigger').quickConfirm({
-	    contents : {
-	      text : "This is the template text.",
-	      proceed : "Go",
-	      cancel : "Nope"
-	    }
-	  });
-	</pre>
-
-	<p>The templating system is completely customizable; the default template can be changed (using <code>{{variableName}}</code> to indicate insertion points for object properties), replacing property names or rendering an entirely different template.</p>
-	<div class="center">
-	  <button id="modified-template-trigger" rel="#modified-template">Modified Template</button>
-	</div>
-	<pre class="brush: js" id="modified-template">
-	  $('#modified-template-trigger').quickConfirm({
-	    template : '&lt;span style="color: red;"&gt;{{question}}&lt;/span&gt;' +
-	               '&lt;a href="#" style="display: block;" onclick="$(this).quickConfirm(\'cancel\'); return false;"&gt;{{no}}&lt;/a&gt;' +
-	               '&lt;a href="#" style="display: block;" onclick="$(this).quickConfirm(\'proceed\'); return false;"&gt;{{go}}&lt;/a&gt;',
-	    contents : {
-	      question : "Newly rendered text",
-	      go : "Proceed is now a link",
-	      no : "Close this dialog"
-	    }
-	  });
-	</pre>
-
-	<p>The template rendering function itself can be changed as well - quickConfirm will use the <code>renderTemplate</code> function to generate the inner HTML string from the <code>template</code> if <code>contents</code> is a plain object. <code>renderTemplate</code> takes as parameters <code>(template, object)</code>; this is fully compatible with the template function from Underscore.js, which can be inserted into quickConfirm with little difficulty.</p>
-	<div class="center">
-	  <button id="underscore-template-trigger" rel="#underscore-template">Underscore Template</button>
-	</div>
-	<pre class="brush: js" id="underscore-template">
-	  $('#underscore-template-trigger').quickConfirm({
-	    template : '&lt;span style="display: block;"&gt;&lt;%= underText %&gt;&lt;/span&gt;' + 
-	               '&lt;% _.each( list, function( item ){ %&gt;' +
-                     '&lt;span&gt;&lt;%= item %&gt;&lt;/span&gt;' +
-                   '&lt;% }); %&gt;',
-	    renderTemplate : _.template,
-	    contents : {
-	      underText : 'Underscore.js templates!',
-	      list : [1, 2, 'three']
-	    }
-	  });
-	</pre>
-	<!-- end templating -->
-
-	<!-- form controls and events -->
-	<h3>Dialog Event Handlers</h3>
-	<p>Custom event handlers can also be bound to the form in one of two ways. The first is to pass the callback functions as properties on the <code>options</code> parameter:</p>
-	<div class="center">
-	  <button id="special-proceed-trigger" rel="#special-proceed">Proceed Handler</button>
-	</div>
-	<pre class="brush: js" id="special-proceed">
-	  $('#special-proceed-trigger').quickConfirm({
-	    onproceed : function(){
-	      alert("Okay.");
-	    }
-	  });
-	</pre>
-	<p>Note that overriding the <code>onproceed</code> parameter in the previous example didn't close the dialog when the proceed button was clicked. The default behavior is to close the dialog; overriding callbacks must manually close the dialog.</p>
-	<div class="center">
-	  <button id="special-cancel-trigger" rel="#special-cancel">Cancel Handler</button>
-	</div>
-	<pre class="brush: js" id="special-cancel">
-	  $('#special-cancel-trigger').quickConfirm({
-	    oncancel : function(){
-	      alert("The dialog was canceled.");
-	      // `this` refers to the quickConfirm dialog element
-	      $(this).quickConfirm('close');
-	    }
-	  });
-	</pre>
-
-	<p>The second way to attach event handlers to the quickConfirm dialog is to directly bind callback functions to the <code>proceed</code> and <code>cancel</code> events on the dialog:</p>
-
-	<div class="center">
-	  <button id="bind-proceed-trigger" rel="#bind-proceed">Bind Proceed</button>
-	</div>
-	<pre class="brush: js" id="bind-proceed">
-	  // no parameters are passed here
-	  $('#bind-proceed-trigger').quickConfirm({});
-
-	  // get the dialog and bind an event to it
-	  $('#bind-proceed-trigger').quickConfirm('dialog')
-	    .bind( 'proceed', function(){
-	      alert("This will still show, and the dialog will still hide. " +
-                "The default functions are not overridden here.");
-	    });
-	</pre>
-	<!-- end form controls and events -->
-
-	<!-- closeOnBlur -->
-	<h3>Close Behavior</h3>
-	<p>All of the previous demonstrations have left the <code>closeOnBlur</code> attribute at the default value of <code>true</code>; this means that clicking anywhere outside the trigger element or the dialog will hide the element. For particularly important dialogs, this behavior can be disabled by setting <code>closeOnBlur</code> to false:</p>
-
-	<div class="center">
-	  <button id="force-close-trigger" rel="#force-close">Force Close</button>
-	</div>
-	<pre class="brush: js" id="force-close">
-	  $('#force-close-trigger').quickConfirm({
-	    closeOnBlur : false
-	  });
-	</pre>
-	<!-- end closeOnBlur -->
-  </div>
-</body>
-</html>
+<div class="center">
+    <button id="force-close">Force Close</button>
+</div>
+{% bind_code force-close %}
+$('#force-close').quickConfirm({
+    closeOnBlur : false
+});
+{% endbind_code %}
+<!-- end closeOnBlur -->
