@@ -289,7 +289,7 @@
 			var el = $( element || this ), qc;
 
 			// cycle through each element to find the one with a quickConfirm element attached
-			while( el && !(qc = el.data( DATA_QC_ELEMENT )) && (el = el.data( DATA_QC_TRIGGER ) || el.parent())) {};
+			while( el.length && !(qc = el.data( DATA_QC_ELEMENT )) && (el = el.data( DATA_QC_TRIGGER ) || el.parent())) {};
 
 			return qc;
         },
